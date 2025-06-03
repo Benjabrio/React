@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-//Imagenes de los logos del contacto
 import portada from './imagenes/portada.jpg';
 import github from './imagenes/github.png';
 import linkedin from './imagenes/linkedin.png';
 import gmail from './imagenes/gmail.png';
-// MUI
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -20,12 +18,22 @@ type PostType = {
 };
 
 export default function App() {
-  const [posts] = useState<PostType[]>([]);
+  const [posts, setPost] = useState<PostType[]>([]);
+
+  const nuevoPost = (nuevoPost: PostType) => {
+    setPost([...posts, nuevoPost]);
+  };
+
+  const eliminarPost = (id: number) => {
+  setPost(posts.filter((post) => post.id !== id));
+};
+
+  const [titulo, setTitulo] = useState('');
+  const [contenido, setContenido] = useState('');
 
   return (
     <Router>
       <Routes>
-        {/* Ruta principal (home) */}
         <Route
           path="/"
           element={
@@ -64,9 +72,7 @@ export default function App() {
                   textAlign: 'center',
                 }}
               >
-                <div>
-                  <h1>Soy Benjamín Briolini y este es mi espacio</h1>
-                </div>
+                <h1>Soy Benjamín Briolini y este es mi espacio</h1>
               </section>
 
               <main
@@ -83,9 +89,83 @@ export default function App() {
                 <h2>Bienvenidos a mi blog personal!</h2>
                 <h3>Para crear un post, dale al botón "crear post"</h3>
                 <Link to="/nuevo">
-                  <button>Crear post</button>
+                  <button
+                    style={{
+                      border: '2px solid #333546',
+                      borderRadius: '15px',
+                      padding: '10px 20px',
+                      fontSize: '16px',
+                    }}
+                  >
+                    Crear post
+                  </button>
                 </Link>
-                {posts.length === 0 ? <p>No hay posts creados.</p> : null}
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {posts.length === 0 ? (
+                    <p>No hay posts creados.</p>
+                  ) : (
+                    posts.map((post) => (
+                      <Card
+                        key={post.id}
+                        sx={{
+                          width: 300,
+                          margin: '1rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          borderRadius: '15px',
+                          border: '2px solid #333546',
+                          height: 180,
+                          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        }}
+                      >
+                        <CardContent style={{ flexGrow: 1 }}>
+                          <Typography variant="h5">{post.title}</Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {post.content}
+                          </Typography>
+                        </CardContent>
+                        <CardActions
+                          style={{
+                            justifyContent: 'space-between',
+                            padding: '0 8px 8px',
+                          }}
+                        >
+                          <Button variant="outlined" color="primary">
+                            Ver más
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              if (window.confirm('¿Estás seguro de que quieres eliminar este post?')) {
+                                eliminarPost(post.id);
+                              }
+                            }}
+                          >
+                            Eliminar
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    ))
+                  )}
+                </div>
               </main>
 
               <section
@@ -98,33 +178,31 @@ export default function App() {
                   textAlign: 'center',
                 }}
               >
-                <div>
-                  <h2>Contacto</h2>
-                  <a href="https://github.com/Benjabrio" target="_blank">
-                    <img
-                      src={github}
-                      alt="GitHub"
-                      style={{ width: '30px', height: '30px' }}
-                    />
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/benjamín-briolini/"
-                    target="_blank"
-                  >
-                    <img
-                      src={linkedin}
-                      alt="LinkedIn"
-                      style={{ width: '30px', height: '30px' }}
-                    />
-                  </a>
-                  <a href="mailto:benjamin.briolini@gmail.com">
-                    <img
-                      src={gmail}
-                      alt="Gmail"
-                      style={{ width: '30px', height: '30px' }}
-                    />
-                  </a>
-                </div>
+                <h2>Contacto</h2>
+                <a href="https://github.com/Benjabrio" target="_blank">
+                  <img
+                    src={github}
+                    alt="GitHub"
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/benjamín-briolini/"
+                  target="_blank"
+                >
+                  <img
+                    src={linkedin}
+                    alt="LinkedIn"
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                </a>
+                <a href="mailto:benjamin.briolini@gmail.com">
+                  <img
+                    src={gmail}
+                    alt="Gmail"
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                </a>
               </section>
 
               <footer
@@ -136,13 +214,12 @@ export default function App() {
                   width: '100%',
                 }}
               >
-                <div>&copy; 2025 Benjamín Briolini. Todos los derechos reservados.</div>
+                &copy; 2025 Benjamín Briolini. Todos los derechos reservados.
               </footer>
             </div>
           }
         />
 
-        {/* NUEVA PÁGINA con ruta /nuevo  */}
         <Route
           path="/nuevo"
           element={
@@ -176,22 +253,65 @@ export default function App() {
                   color: 'white',
                   textAlign: 'center',
                 }}
-                >
-                  <h1 style={{fontSize:'36px'}}>CREADOR DE POSTS</h1>
+              >
+                <h1 style={{ fontSize: '36px' }}>CREADOR DE POSTS</h1>
               </section>
 
-
-              <main style={{ padding: '20px', textAlign: 'center'}}>
+              <main
+                style={{
+                  padding: '20px',
+                  textAlign: 'center',
+                  flex: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
                 <Card sx={{ maxWidth: 300, margin: '1rem' }}>
                   <CardContent>
                     <Typography variant="h5">Nuevo post</Typography>
-                    <TextField label="Título" fullWidth margin="normal" />
-                    <TextField label="Descripción" multiline rows={4} fullWidth margin="normal" />
+                    <TextField
+                      label="Título"
+                      fullWidth
+                      margin="normal"
+                      value={titulo}
+                      onChange={(evento) => setTitulo(evento.target.value)}
+                    />
+                    <TextField
+                      label="Descripción"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      margin="normal"
+                      value={contenido}
+                      onChange={(e) => setContenido(e.target.value)}
+                    />
                   </CardContent>
                   <CardActions style={{ justifyContent: 'space-between' }}>
-                    <Button variant="outlined" color="success">Crear Post</Button>
                     <Link to="/">
-                      <Button variant="outlined" color="error">Volver</Button>
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        onClick={() => {
+                          const nuevo: PostType = {
+                            id: posts.length + 1,
+                            title: titulo,
+                            content: contenido,
+                          };
+                          nuevoPost(nuevo);
+                          setTitulo('');
+                          setContenido('');
+                          window.alert('Usted ha creado un nuevo post!');
+                        }}
+                      >
+                        Crear
+                      </Button>
+                    </Link>
+                    <Link to="/">
+                      <Button variant="outlined" color="error">
+                        Salir
+                      </Button>
                     </Link>
                   </CardActions>
                 </Card>
